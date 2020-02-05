@@ -53,10 +53,9 @@ export const build = async function (output: string, input: string, config: Make
   const Seven = require('node-7z');
 
   const sevenZFile = output.replace("exe", "7z");
-
-  const finishedPromise = promisify(finished);
+  
   console.log(`Compressing ${input} to ${sevenZFile}`);
-  await finishedPromise(Seven.add(sevenZFile, input, {
+  await promisify(finished)(Seven.add(sevenZFile, input, {
     method: config.sevenZMethod || [
       "0=lzma2",
       "x=9",
@@ -71,7 +70,7 @@ export const build = async function (output: string, input: string, config: Make
   await pipeFileToStream(config.sfxFile || path.join(__dirname, "..", "7zsd_extra_162_3888", targetArch === "x64" ? "7zSD_All_x64.sfx" : "7zSD_All.sfx"), exeStream);
   await writeConfigToStream(config, exeStream);
   await pipeFileToStream(sevenZFile, exeStream);
-
+  await promisify(fs.unlink)(sevenZFile);
   exeStream.close();
 }
 
