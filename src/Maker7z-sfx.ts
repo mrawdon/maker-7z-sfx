@@ -57,7 +57,12 @@ export const build = async function (output: string, input: string, config: Make
   const finishedPromise = promisify(finished);
   console.log(`Compressing ${input} to ${sevenZFile}`);
   await finishedPromise(Seven.add(sevenZFile, input, {
-    method: config.sevenZMethod || [],
+    method: config.sevenZMethod || [
+      "0=lzma2",
+      "x=9",
+      "d=1024m",
+      "s=on"
+    ],
     $bin: require.resolve("7zip-bin\\win\\x64\\7za.exe")
   }));
   console.log("Compressed");
