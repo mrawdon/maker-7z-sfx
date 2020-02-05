@@ -39,21 +39,23 @@ export default class Maker7zSfx extends MakerBase<MakerSfxConfig> {
   }: MakerOptions) {
     const exePath = path.resolve(makeDir, '7z-sfx', targetPlatform, targetArch, `${path.basename(dir)}-${packageJSON.version}.exe`);
     await this.ensureFile(exePath);
-    if (!this.config.runProgram) {
-      throw new Error("Option runProgram must be defined");
+    const runProgram = this.config.runProgram || `${packageJSON.productName}.exe`;
+    if (!(await promisify(fs.exists)(path.join(dir, runProgram)))) {
+      throw new Error(`${path.join(dir, runProgram)} doesn't exist use runProgram option if your executable is not package productName.exe`);
     }
-    await build(exePath, path.join(dir, "*"), this.config, targetArch);
+
+    await build(exePath, path.join(dir, "*"), this.config, targetArch, runProgram);
     return [exePath];
   }
 }
 
 
-export const build = async function (output: string, input: string, config: MakerSfxConfig, targetArch: string) {
+export const build = async function (output: string, input: string, config: MakerSfxConfig, targetArch: string, runProgram: string) {
   // eslint-disable-next-line global-require
   const Seven = require('node-7z');
 
   const sevenZFile = output.replace("exe", "7z");
-  
+
   console.log(`Compressing ${input} to ${sevenZFile}`);
   await promisify(finished)(Seven.add(sevenZFile, input, {
     method: config.sevenZMethod || [
@@ -68,7 +70,7 @@ export const build = async function (output: string, input: string, config: Make
   console.log(`Building executable ${output}`);
   const exeStream = fs.createWriteStream(output);
   await pipeFileToStream(config.sfxFile || path.join(__dirname, "..", "7zsd_extra_162_3888", targetArch === "x64" ? "7zSD_All_x64.sfx" : "7zSD_All.sfx"), exeStream);
-  await writeConfigToStream(config, exeStream);
+  await writeConfigToStream(config, exeStream, runProgram);
   await pipeFileToStream(sevenZFile, exeStream);
   await promisify(fs.unlink)(sevenZFile);
   exeStream.close();
@@ -92,7 +94,7 @@ async function pipeFileToStream(file: string, writeStream: fs.WriteStream) {
   console.log(`Copied ${file}`);
 }
 
-async function writeConfigToStream(config: MakerSfxConfig, exeStream: fs.WriteStream) {
+async function writeConfigToStream(config: MakerSfxConfig, exeStream: fs.WriteStream, runProgram: string) {
 
   exeStream.write(";!@Install@!UTF-8! \r\n");
   if (config.title) {
@@ -107,12 +109,13 @@ async function writeConfigToStream(config: MakerSfxConfig, exeStream: fs.WriteSt
     exeStream.write(`ExtractPathTitle="${config.extractPathTitle}" \r\n`);
   }
 
-  exeStream.write(`ExtractTitle="${config.extractTitle || `Launching ${config.runProgram}`}" \r\n`);
+
+  exeStream.write(`ExtractTitle="${config.extractTitle || `Launching ${runProgram}`}" \r\n`);
   if (config.extractDialogText) {
     exeStream.write(`ExtractDialogText="${config.extractDialogText}" \r\n`);
   }
 
-  exeStream.write(`RunProgram="${config.runProgram}" \r\n`);
+  exeStream.write(`RunProgram="${runProgram}" \r\n`);
   if (config.additionalConfig) {
     config.additionalConfig.forEach(line => {
       exeStream.write(`${line} \r\n`);
