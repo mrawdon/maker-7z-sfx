@@ -18,7 +18,7 @@ export interface MakerSfxConfig {
   extractTitle?: string,
   additionalConfig?: string[],
   additionalPostConfig?: string[],
-  sevenZMethod:string[]
+  sevenZMethod: string[]
 }
 
 export default class Maker7zSfx extends MakerBase<MakerSfxConfig> {
@@ -63,10 +63,10 @@ export const build = async function (output: string, input: string, config: Make
   console.log("Compressed");
   console.log(`Building executable ${output}`);
   const exeStream = fs.createWriteStream(output);
-  await pipeFileToStream(config.sfxFile || path.join(__dirname, "..", "7zsd_extra_162_3888", targetArch === "x64"? "7zSD_All_x64.sfx" : "7zSD_All.sfx"), exeStream);
+  await pipeFileToStream(config.sfxFile || path.join(__dirname, "..", "7zsd_extra_162_3888", targetArch === "x64" ? "7zSD_All_x64.sfx" : "7zSD_All.sfx"), exeStream);
   await writeConfigToStream(config, exeStream);
   await pipeFileToStream(sevenZFile, exeStream);
-  
+
   exeStream.close();
 }
 
@@ -109,15 +109,15 @@ async function writeConfigToStream(config: MakerSfxConfig, exeStream: fs.WriteSt
   }
 
   exeStream.write(`RunProgram="${config.runProgram}" \r\n`);
-  if(config.additionalConfig){
-    config.additionalConfig.forEach(line=>{
-      exeStream.write(`${line} \r\n`);    
+  if (config.additionalConfig) {
+    config.additionalConfig.forEach(line => {
+      exeStream.write(`${line} \r\n`);
     });
   }
   exeStream.write(";!@InstallEnd@! \r\n");
-  if(config.additionalPostConfig){
-    config.additionalPostConfig.forEach(line=>{
-      exeStream.write(`${line} \r\n`);    
+  if (config.additionalPostConfig) {
+    config.additionalPostConfig.forEach(line => {
+      exeStream.write(`${line} \r\n`);
     });
   }
 }
