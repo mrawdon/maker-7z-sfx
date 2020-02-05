@@ -1,6 +1,6 @@
 {
   "name": "maker-7z-sfx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "7z SFX maker for Electron Forge",
   "repository": "https://github.com/mrawdon/maker-7z-sfx",
   "author": "Michael Rawdon",

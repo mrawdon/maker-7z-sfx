@@ -15,3 +15,5 @@ This will bundle all assets from your build directory to create a self extractin
 ```
 3. Configure additional options you can find the ones currently defined in [MakerSfxConfig.ts](src/Maker7z-sfx.ts)
 The definition of the fields can be found at [Parameters](https://github.com/chrislake/7zsfxmm/wiki/Parameters)
+
+Note: the 7zsd sfx files are downloaded from https://github.com/OlegScherbakov/7zSFX they are separetely licensed under the LGPL
