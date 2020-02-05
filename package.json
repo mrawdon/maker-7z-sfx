@@ -1,0 +1,29 @@
+{
+  "name": "maker-7z-sfx",
+  "version": "1.0.0",
+  "description": "7z SFX maker for Electron Forge",
+  "repository": "https://github.com/mrawdon/maker-7z-sfx",
+  "author": "Michael Rawdon",
+  "license": "MIT",
+  "main": "dist/Maker7z-sfx.js",
+  "typings": "dist/Maker7z-sfx.d.ts",
+  "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "^7.0.1",
+    "typescript": "3.7.5"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "engines": {
+    "node": ">= 10.0.0"
+  },
+  "dependencies": {
+    "@electron-forge/maker-base": "6.0.0-beta.45",
+    "@electron-forge/shared-types": "6.0.0-beta.45",
+    "source-map-support": "^0.5.13",
+    "fs-extra": "^8.1.0",
+    "node-7z": "^2.0.5",
+    "7zip-bin": "5.0.3"
+  }
+}
