@@ -9,7 +9,7 @@
   "typings": "dist/Maker7z-sfx.d.ts",
   "devDependencies": {
     "chai": "4.2.0",
-    "mocha": "^7.0.1",
+    "mocha": "^10.2.0",
     "typescript": "3.7.5"
   },
   "scripts": {
